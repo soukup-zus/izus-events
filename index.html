@@ -5,8 +5,8 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <meta name="cache-version" content="v1757626786448">
-    <meta name="last-update" content="2025-09-11T21:39:46.448Z">
+    <meta name="cache-version" content="v1757627435613">
+    <meta name="last-update" content="2025-09-11T21:50:35.613Z">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Program akcí - ZUŠ Louny</title>
     <style>
@@ -29,7 +29,65 @@
             margin: 0 auto;
             padding: 20px;
         }
-        
+        .header {
+            margin-bottom: 40px;
+            color: #ffffff;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-section {
+            flex-shrink: 0;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .header-content {
+            flex: 1;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 300;
+        }
+
+        .header-content .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .header-content .last-update {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .logo {
+                width: 60px;
+                height: 60px;
+            }
+        }
         .header {
            text-align: center;
            margin-bottom: 40px;
@@ -231,9 +289,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Program akcí</h1>
-            <div class="subtitle">ZUŠ Louny</div>
-            <div class="last-update">Aktualizováno: 11. 9. 2025 23:39:46</div>
+            <div class="header-container">
+                <div class="logo-section">
+                    <img src="{{LOGO_URL}}" alt="Logo školy" class="logo">
+                </div>
+                <div class="header-content">
+                    <h1>Program akcí</h1>
+                    <div class="subtitle">{{SCHOOL_NAME}}</div>
+                    <div class="last-update">Aktualizováno: 11. 9. 2025 23:50:35</div>
+                </div>
+            </div>
         </div>
         
         <div class="program">
