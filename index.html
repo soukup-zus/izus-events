@@ -1,0 +1,3935 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-version" content="v1757621601683">
+    <meta name="last-update" content="2025-09-11T20:13:21.683Z">
+    
+    <meta name="description" content="Program akcí ZUŠ Louny - automaticky aktualizovaný z IZUS systému">
+    <meta name="keywords" content="program, akce, ZUŠ Louny, události, kalendář, IZUS">
+    <meta property="og:title" content="Program akcí - ZUŠ Louny">
+    <meta property="og:description" content="Aktuální program všech akcí a událostí - automaticky synchronizováno">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="robots" content="index, follow">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Program akcí - ZUŠ Louny</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 300;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .header .last-update {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            min-width: 150px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        .day-section {
+            background: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .day-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px 30px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .day-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        
+        .events-grid {
+            padding: 30px;
+            display: grid;
+            gap: 20px;
+        }
+        
+        .event-card {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #4facfe;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(79, 172, 254, 0.2);
+            border-left-color: #00f2fe;
+        }
+        
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+        
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            gap: 20px;
+        }
+        
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.3;
+            flex: 1;
+        }
+        
+        .event-type {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .event-details {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .event-detail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+        
+        .detail-icon {
+            width: 20px;
+            height: 20px;
+            background: #4facfe;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        
+        .event-notes {
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            font-style: italic;
+            color: #666;
+            border-left: 3px solid #4facfe;
+        }
+        
+        .no-events {
+            text-align: center;
+            padding: 60px 30px;
+            color: #999;
+            font-size: 1.1rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
+            
+            .stat-card {
+                min-width: 120px;
+                padding: 15px;
+            }
+            
+            .day-header {
+                padding: 15px 20px;
+                font-size: 1.3rem;
+            }
+            
+            .events-grid {
+                padding: 20px;
+            }
+            
+            .event-card {
+                padding: 20px;
+            }
+            
+            .event-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+        <div style="position: fixed; top: 10px; right: 10px; background: linear-gradient(135deg, #28a745, #20c997); color: white; padding: 8px 12px; border-radius: 15px; font-size: 0.8rem; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+            <span>🔄 Auto-sync 15 min</span>
+        </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Program akcí</h1>
+            <div class="subtitle">ZUŠ Louny</div>
+            <div class="last-update">Aktualizováno: 11. 9. 2025 22:13:21</div>
+        </div>
+        
+        <div style="background: rgba(40,167,69,0.1); padding: 15px; margin: 20px 0; border-radius: 10px; border-left: 4px solid #28a745; text-align: center;">
+            <strong>🔄 Automaticky synchronizováno</strong><br>
+            <span style="font-size: 0.9rem; opacity: 0.8;">
+                Poslední aktualizace: 11. 9. 2025 22:13:21<br>
+                Další aktualizace za 15 minut
+            </span>
+        </div>
+    
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number">91</span>
+                <span class="stat-label">Celkem akcí</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">83</span>
+                <span class="stat-label">Dní s akcemi</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">11</span>
+                <span class="stat-label">Typů akcí</span>
+            </div>
+        </div>
+        
+        <div class="program">
+            
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 12. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Porada ředitelů ZŠ a ZUŠ</div>
+                                    <div class="event-type">porada</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 11:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 22A HN</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Káva a muzika v centru</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Mírové náměstí Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci naší školy Vám svou hudbou&amp;nbsp;zpříjemní páteční podvečer v centru města.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 13. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Mostecké slavnosti</div>
+                                    <div class="event-type">ostatní</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            11:00 - 12:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Most</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Růženky se zúčastní průvodu na každoročních mosteckých slavnostech.
+                                    </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">DEN EVROPSKÉHO DĚDICTVÍ</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            14:00 - 15:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci naší školy se představí při krátkém koncertu v rámci Dne evropského dědictví.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 18. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">CARMEN ZAHAJUJE VÝSTAVU O SKLADATELI ZDEŇKU ŠESTÁKOVI</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:00 - 18:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Oblastní muzeum v Lounech</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Při slavnostním zahájení výstavy v lounském muzeu zazpívá náš pěvecký sbor CARMEN výběr písniček cítolibského rodáka Zdeňka Šestáka, který letos oslaví své 100. narozeniny.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 23. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">1. PEDAGOGICKÁ PORADA</div>
+                                    <div class="event-type">porada</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 11:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 26. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">SOUSTŘEDĚNÍ SBORU CARMEN A VÝTVARNÉHO OBORU</div>
+                                    <div class="event-type">soustředění</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 15:00
+                                             (55 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Poustky</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na prvním soustředění sboru CARMEN v tomto školním roce se zpěváci budou připravovat na svá nejbližší vystoupení pod vedením paní učitelky Kateřiny Štolové a Jitky Sedláčkové. Provázet je budou i žáci výtvarného oboru s jejich paní učitelkou Janou Timrovou.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 27. září 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Rádobyfest</div>
+                                    <div class="event-type">představení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            12:00 - 18:00
+                                             (6 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Klapý</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Soubor Páteční hoši zahrají svou inscenaci O čem v letu ptáci sní na divadlením festivalu Rádobyfest v Klapém.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 1. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA PRACÍ ŽÁKŮ JANY MAREŠOVÉ</div>
+                                    <div class="event-type">výstava</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 08:00
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci pod vedením paní učitelky Jany Marešové vystavují v kostele CČSH své práce. Výstava potrvá do konce ledna.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 10. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">SOUSTŘEDĚNÍ VÝTVARNÉHO OBORU</div>
+                                    <div class="event-type">soustředění</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 12:00
+                                             (52 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Poustky u Žihle</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci paní učitelek Evy Fialkové, Soni Racety a Jany Timrové vyrazí na soustředění do klidného prostředí v Poustkách u Žihle.
+                                    </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Soustředění LDO + TO</div>
+                                    <div class="event-type">soustředění</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            15:00 - 15:00
+                                             (48 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Písky u Křivoklátu</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Společné soustředění literárně-dramatického a tanečního oboru.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 17. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Divadelní festival Oprášeno</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            18:00 - 18:00
+                                             (48 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>ZUŠ Strašecí</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Soubor Páteční hoši se svou inscenací O čem v letu ptáci sní vystoupí na divadelním festivalu Oprášeno v ZUŠ Strašecí.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 18. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ADRUMALINE - Superkus na bubenické show</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            20:00 - 22:00
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Koncert rytmicko-melodické skupiny z holandského Barendrechtu opět v Lounech! A možná přijde i Superkus a přitančí HD ZLOUNI.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 20. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční koncert si vás dovolují pozvat žáci z oddělení klávesových nástrojů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 22. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">European majorette cup</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 08:00
+                                             (97 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Poreč, Chorvatsko</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Adéla Benešová a Karolína Mašková budou reprezentovat naší ZUŠ na Evropském cupu v Chorvatsku.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 23. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KONCERT PŘÍPRAVNÝCH PĚVECKÝCH SBORŮ - SKŘIVÁNCI A NOTIČKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> První koncert přípravných pěveckých sborů v tomto školním roce. Zazpívají sbory Skřivánci a Notičky. Sbory vedou paní učitelka Kateřina Štolová a pan učitel Petr Bernard, klavírní spolupráce paní učitelka Jitka Sedláčková.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 25. října 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Divadelní festival DVD DAMU Praha</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            13:00 - 15:00
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>DAMU Praha</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Soubor Páteční hoši zahraje svou inscenaci &quot;O čem v letu ptáci sní&quot; na divadelním festivalu Děti-Výchova-Divadlo (DVD) na pražské DAMU.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 10. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční koncert si vás dovolují pozvat žáci z oddělení klávesových nástrojů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 13. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">1. ŽÁKOVSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci hudebního oboru naší školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 24. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Čtvrtletní schůzky oddělení</div>
+                                    <div class="event-type">porada</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 20:00
+                                             (108 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Učebny ZUŠ</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 28. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ADVENTNÍ KONCERT CARMEN V DOBROMĚŘICÍCH</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            16:30 - 17:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Kostel sv. Matouše v Dobroměřicích</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Zahájení adventního času v Dobroměřicích bude patřit pěveckému sboru CARMEN pod vedením Kateřiny Štolové. Spolu s dalšími sólisty naší ZUŠ a Triem Cum amore si v kostele sv. Matouše vyslechnete známé i neznámé adventní a vánoční písně. Přijďte si s námi společně zazpívat.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 29. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Kvalifikační soutěž na MČR v twirlingu level World, A, B</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 20:00
+                                             (36 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hradec Králové</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žákyně se zúčastní kvalifikační soutěže level World, A, B.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            neděle 30. listopadu 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ROZSVÍCENÍ VÁNOČNÍHO STROMU V LOUNECH</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            16:00 - 17:30
+                                             (1h 30min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Mírové náměstí, Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Školní pěvecké sbory pod vedením paní učitelky Kateřiny Štolové zazpívají na tradiční vánoční akci. Letos se k nim připojí také nově založený školní big band pod vedením pana učitele Petra Hnilici.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 1. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční koncert si vás dovolují pozvat žáci z oddělení klávesových nástrojů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 2. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Adventní koncert třídy Marcely Brýdové</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 8. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Vánoční rozjímání</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Srdečně Vás zveme na vánoční koncert žáků klavírní třídy Evy Maťátko. Koncertem Vás provedou mladí klavíristé, kteří si pro vás připravili výběr vánočních melodií i klasických skladeb. Přijďte se na chvíli zastavit v předvánočním shonu a užít si chvíle rozjímání u hudby, která zahřeje na duši.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 11. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">2. ŽÁKOVSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci hudebního oboru naší školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 12. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">UŽ TO ZVONÍ, UŽ TO CINKÁ</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční adventní koncert vás zvou varhanice a varhaníci z klavírních tříd ZUŠ Louny spolu se svými hosty. Pojďte se s námi zaposlouchat do klasických a vánočních melodií.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 15. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Předvánoční setkání u klavíru</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci z klavírních tříd paní učitelky Jaroslavy Sejvalové a Karolíny Blehové srdečně zvou všechny, kteří mají rádi předvánoční čas s příjemnou hudbou.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 16. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Vánoční kolečko předškoláků</div>
+                                    <div class="event-type">besídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            16:20 - 17:50
+                                             (1h 30min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>KD Zastávka</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Vánoční setkání rodičů a dětí Kolečka předškoláků.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 18. prosince 2025
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert žáků Jaromíra Laksy</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Adventní posezení s hudbou pro potěšení rodičů a přátel školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 8. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA PRACÍ ŽÁKŮ SONI RACETY - VERNISÁŽ</div>
+                                    <div class="event-type">vernisáž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci pod vedením paní učitelky Soni Racety vystavují v prostorách ZUŠ Louny. Srdečně Vás zveme na vernisáž, která se bude konat 08.01.2026 na sále školy. První část v 17.15 hod, druhá část v 17.45 hod. Těšíme se na Vás. Výstav potrvá do konce února.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 12. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert žáků Jitky Sedláčkové</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 19:00
+                                             (1h 45min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Klavíristé ze třídy paní učitelky Jitky Sedláčkové si vás dovolují pozvat na svůj koncert. Na závěr již tradičně vystoupí kapela The Kangaroos.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 15. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert třídy Lucie Voldřichové</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:00
+                                             (45 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 19. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KONCERT DECHOVÉHO ODDĚLENÍ</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci dechového oddělení.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 20. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">POLOLETNÍ PEDAGOGICKÁ PORADA</div>
+                                    <div class="event-type">porada</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 11:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA PRACÍ ŽÁKŮ SONI RACETY - Portrét trochu jinak</div>
+                                    <div class="event-type">výstava</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            18:00 - 18:00
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci ze třídy paní učitelky Soni Racety vystavují své práce z cyklu - Portrét trochu jinak v prostorech kostela CČSH Louny. Výstava je bez vernisáže.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 21. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">GALERIE PLNÁ POEZIE - ŽÁCI PANÍ UČITELKY OKSANY KAPLANOVÉ</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:00 - 18:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Galerie města Loun</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Recitační večer žáků Oksany Kaplanové.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 23. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">POLOLETNÍ KLASIFIKACE</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 18:00
+                                             (10 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 26. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> V rámci tradičního koncertu klávesových nástrojů proběhne školní kolo soutěže ZUŠ ve hře na keyboard a akordeon.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 28. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert pěvecké třídy Veroniky Studené a Lenky Portové</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Galerie města Loun</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 29. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">3. ŽÁKOVSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci hudebního oboru školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 31. ledna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Mistrovství České Republiky v twirlingu - v případě postupu z 29. a 30.11.2025</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 20:00
+                                             (36 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hradec Králové</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci tanečního oboru se zúčastní soutěže, pokud se jim podaří postoupit z nominační soutěže, která se koná v listopadu.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 2. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">SPOLEČNÁ VÝSTAVA VÝTVARNÉHO OBORU</div>
+                                    <div class="event-type">výstava</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 10:00
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Foyer Vrchlického divadla</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Srdečně vás zveme na společnou výstavu se společnou tématikou výtvarných prací, kterou představí žáci pod vedením učitelek:&amp;nbsp;Soni Racety, Evy Fialkové, Jany Timrové a Jany Marešové.Výstava nabídne ucelený průřez tvorbou napříč médii, zahrnující jak tradiční výtvarné techniky, tak i fotografii a grafiku. Vernisáž pro Fotografii a užitou tvorbu bude 09.02.2025 od 17:30.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 5. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert tříd Petra Kouby a Jana Stehlíka</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertě se představí bubeníci, kytaristé i elektrikáři. Můžete se těšit na pořádnou nadílku decibelů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 9. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA FOTOGRAFIÍ EVY FIALKOVÉ - VERNISÁŽ</div>
+                                    <div class="event-type">vernisáž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 17:30
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Zveme Vás na vernisáž fotografií žáků paní učitelky Fialkové.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 12. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert třídy Jiřího Soukupa</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Svět se dělí na dva druhy lidí: bubeníky a ty, co by chtěli být bubeníky ?Přijďte se podívat na ty, kteří se na cestu stát se bubeníky pod vedením pana učitele Jiřího Soukupa již vydali.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 24. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Okresní kolo soutěže MŠMT</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 14:00
+                                             (5 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>V řešení</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 26. února 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA PRACÍ ŽÁKŮ JANY MAREŠOVÉ - VERNISÁŽ</div>
+                                    <div class="event-type">vernisáž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci pod vedením paní učitelky Jany Marešové vystavují v prostorách ZUŠ Louny. Srdečně Vás zveme na vernisáž, která se bude konat 26.02.2026 na sále školy. První část v 17.15 hod, druhá část v 17.45 hod. Těšíme se na Vás. Výstav potrvá do konce dubna.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 2. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Černobílé setkání</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 19:15
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 5. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">4. ŽÁKOVSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci hudebního oboru školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 9. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční koncert si vás dovolují pozvat žáci z oddělení klávesových nástrojů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 12. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KONCERT PŘÍPRAVNÝCH PĚVECKÝCH SBORŮ PASTELKA, SKŘIVÁNCI A NOTIČKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 17:30
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci z přípravných sborů naší ZUŠ zazpívají na dalším svém koncertu. Uslyšíte ty nejmenší - sbor Pastelka - pod vedením Lenky Portové a Petra Bernarda. Mladší školáky - sbor Skřivánci - pod vedením Kateřiny Štolové a Petra Bernarda. A starší školáky - sbor Notičky - pod vedením Kateřiny Štolové.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 14. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Elitery</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 18:00
+                                             (10 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Sportovní hala Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci tanečního oboru se zúčastní pohárové soutěže Elitery.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            neděle 15. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Elitery</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 18:00
+                                             (10 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Sportovní hala Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci tanečního oboru se zúčastní pohárové soutěže Elitery.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 16. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Na pohodu...</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 17. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">RODINNÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:00 - 18:30
+                                             (1h 30min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Základní umělecká škola Louny všechny srdečně zve na Rodinný koncert.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 19. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ABSOLVENTSKÁ VÝSTAVA VÝTVARNÉHO OBORU - VERNISÁŽ</div>
+                                    <div class="event-type">vernisáž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            16:30 - 16:30
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Knihovna Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Zveme vás na vernisáž absolventské výstavy žáků výtvarného oboru. Součástí vernisáže bude předání absolventských listů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 20. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Louny Poeticky</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 18:00
+                                             (32 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Knihovna Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Krajská přehlídka Wolkrův Prostějov.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            neděle 22. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Okres recitace Dětská scéna</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 18:00
+                                             (8 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Knihovna Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Okresní kolo recitační přehlídky Dětská scéna 2026.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 25. března 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Krajské kolo MŠMT</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 18:00
+                                             (56 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>ZUŠ Klášterec nad Ohří</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Krajské kolo přehlídky MŠMT LDO.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 11. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Krajské kolo recitace Dětská scéna 2026</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 18:00
+                                             (33 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Knihovna Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Krajské kolo recitace Dětská scéna 2026.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 13. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Klávesové pexeso - třídní koncert žáků pana učitele Zdeňka Kohouta</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 16. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">5. ŽÁKOVSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci hudebního oboru školy.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 18. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">HRAJEME S ORFFEM</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 17:00
+                                             (8 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na již 17. ročníku soutěžního festivalu Hrajeme s Orffem se představí dětské pěvecké sbory nejen z Ústeckého kraje. Odborná porota bude hodnotit jejich pěvecké dovednosti a propojení zpěvu s hrou na jednoduché rytmické a melodické nástroje podle vzoru&amp;nbsp; německého hudebního skladatele a pedagoga Carla Orffa.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 20. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Projektové dny Kolečka předškoláků</div>
+                                    <div class="event-type">ostatní</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 11:00
+                                             (50 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 23A LDO</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">KLAVÍRNÍ PONDĚLKY</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční koncert si vás dovolují pozvat žáci z oddělení klávesových nástrojů.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 23. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Třídní koncert žáků Petra Bernarda a Petra Hnilici</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 25. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Krajské kolo Dětská scéna - divadlo</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 18:00
+                                             (33 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Krajské kolo Dětská scéna 2026 - divadlo.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 27. dubna 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">FESTIVAL SOUBORŮ</div>
+                                    <div class="event-type">přehlídka</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:00 - 21:00
+                                             (4 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Kulturní dům Zastávka</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> V bohatém programu vystoupí všechny kapely a orchestry naší školy a hosté ze spřátelených základních uměleckých škol.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 2. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Kvalifikační soutěž na NTP v twirlingu level C a OPEN</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 20:00
+                                             (12 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Kolín</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci tanečního oboru se zúčastní nominační soutěže na Národní twirlingový pohár.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 4. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA FOTOGRAFIÍ EVY FIALKOVÉ</div>
+                                    <div class="event-type">výstava</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            12:00 - 12:00
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Čajovna u sv. Mikuláše Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci pod vedením paní učitelky Evy Fialkové vystavují fotografie v prostorách lounské čajovny. Výstava je bez vernisáže, potrvá do konce května.
+                                    </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Koncert dechového oddělení</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:15
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na koncertu se představí žáci dechového oddělení.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 5. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">SOUZNĚNÍ HLASŮ - TŘÍDNÍ KONCERT ŽÁKŮ PANÍ UČITELKY RENATY ZÁZVORKOVÉ</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 19:00
+                                             (1h 30min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>GAML</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 7. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VÝSTAVA PRACÍ ŽÁKŮ JANY TIMROVÉ - VERNISÁŽ</div>
+                                    <div class="event-type">vernisáž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 17:15
+                                             (0 min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Srdečně vás zveme na vernisáž výtvarných prací. Přijďte se podívat na výstavu prací žáků paní učitelky Jany Timrové. Těšit se můžete na pestrou škálu prací z oborů Výtvarná tvorba a Grafika i 3D tvorba. Výstava potrvá do konce června.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 11. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Projektové dny</div>
+                                    <div class="event-type">ostatní</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            09:00 - 11:00
+                                             (98 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Celá škola</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ABSOLVENTSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 12. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ABSOLVENTSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 13. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ABSOLVENTSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 14. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">ABSOLVENTSKÝ KONCERT</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pondělí 18. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">DIVADELNÍ VEČER I.</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 19:30
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Třídní vystoupení literárně-dramatického oboru.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 19. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">DIVADELNÍ VEČER II.</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 19:30
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Třídní vystoupení literárně-dramatického oboru vol.2.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            středa 20. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">VYSTOUPENÍ TANEČNÍHO OBORU</div>
+                                    <div class="event-type">představení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            18:00 - 19:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Kulturní dům Zastávka</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žákyně tanečního oboru pod vedením paní učitelek Lenky Havlištové a Natalie Havlištové ukáží choreografie, které postavily v tomto školním roce.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 21. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">DIVADELNÍ VEČER III.</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 19:30
+                                             (2 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Vrchlického divadlo Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Třídní vystoupení literárně-dramatického oboru vol.3.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 29. května 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Noc kostelů s pěveckými sbory</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            19:00 - 20:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Chrám sv. Mikuláše v Lounech</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Letošní Noc kostelů opět zahájí v Lounech v chrámu sv. Mikuláše naše pěvecké sbory Carmen, Notičky a Skřivánci pod vedením paní učitelky Kateřiny Štolové a pana učitele Petra Bernarda. Na klavír doprovází paní učitelka Jitka Sedláčková.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 9. června 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Závěrečná pedagogická porada</div>
+                                    <div class="event-type">porada</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            10:00 - 11:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Hlavní budova - 14A Sál</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            pátek 12. června 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                2 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Závěrečná klasifikace</div>
+                                    <div class="event-type">ostatní</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            11:00 - 12:00
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Celá škola</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Prázdninové varhany</div>
+                                    <div class="event-type">koncert</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:15 - 18:30
+                                             (1h 15min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>kostel CČSH Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Na svůj tradiční varhanní koncert si vás dovoují pozvat žáci z klavríních tříd ZUŠ Louny spolu se svými hosty.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            úterý 16. června 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Prázdninový happening - PŘEDBĚŽNÝ TERMÍN</div>
+                                    <div class="event-type">ostatní</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            16:20 - 21:00
+                                             (4h 40min)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Výstaviště Louny</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            sobota 20. června 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">Národní twirlingový pohár Level C a OPEN - v případě postupu z 2.5.2026</div>
+                                    <div class="event-type">soutěž</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            08:00 - 20:00
+                                             (36 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Dvůr Králové</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                                    <div class="event-notes">
+                                        <strong>Poznámky:</strong> Žáci tanečního oboru se zúčastní této soutěže, pokud se jim podaří postoupit z nominační soutěže konané v květnu.
+                                    </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+                <div class="day-section">
+                    <div class="day-header">
+                        <div class="day-icon">📅</div>
+                        <div>
+                            čtvrtek 25. června 2026
+                            <div style="font-size: 0.9rem; opacity: 0.8; font-weight: normal;">
+                                1 akce
+                            </div>
+                        </div>
+                    </div>
+                    <div class="events-grid">
+                        
+                            <div class="event-card">
+                                <div class="event-header">
+                                    <div class="event-title">GALERIE PLNÁ POEZIE</div>
+                                    <div class="event-type">vystoupení</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-detail">
+                                        <div class="detail-icon">🕐</div>
+                                        <div>
+                                            17:30 - 18:30
+                                             (1 h)
+                                        </div>
+                                    </div>
+                                    
+                                        <div class="event-detail">
+                                            <div class="detail-icon">📍</div>
+                                            <div>Galerie města Loun</div>
+                                        </div>
+                                    
+                                </div>
+                                
+                            </div>
+                        
+                    </div>
+                </div>
+              
+        </div>
+        
+        
+        
+        <div class="footer">
+            <div>Program je automaticky synchronizován z IZUS systému</div>
+            <div style="font-size: 0.9rem; opacity: 0.7; margin-top: 10px;">
+                Aktualizace každých 15 minut • 
+                Posledních 91 událostí načteno z XML
+            </div>
+        </div>
+    </div>
+</body>
+</html>
